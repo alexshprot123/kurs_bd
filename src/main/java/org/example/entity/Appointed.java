@@ -13,5 +13,6 @@ public class Appointed {
     public Doctor doctor;
     @ManyToOne(cascade = CascadeType.ALL)
     public Patient patient;
+    @Column(nullable = false)
     public LocalDate date;
 }

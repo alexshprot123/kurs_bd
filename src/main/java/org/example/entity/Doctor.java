@@ -11,6 +11,7 @@ public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
+    @Column(nullable = false)
     public String name;
     public String gender;
     public LocalDate birthdate;

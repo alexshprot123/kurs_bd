@@ -35,13 +35,13 @@ public class BD {
         return sessionFactoryObj;
     }
 
-    public static Session openSession(){
+    private static Session openSession(){
         Session session = sessionFactoryObj.openSession();
         session.beginTransaction();
         return session;
     }
 
-    public static void closeSession(Session session){
+    private static void closeSession(Session session){
         session.getTransaction().commit();
         session.close();
     }
@@ -55,6 +55,25 @@ public class BD {
     }
 
     public static List<Doctor> getDoctorsByProfession(long id){
+        Session session = openSession();
+        Query query = session.createQuery("select p from Doctor p WHERE p.profession = " + id + " ORDER BY p.name");
+        List<Doctor> doctors = null;
+        try{
+            doctors = (List<Doctor>) query.getResultList();
+        }catch(Exception ex){
+
+        }
+        session.getTransaction().commit();
+        session.close();
+        return doctors;
+    }
+
+    public static List<Doctor> getDoctorsByProfession(String profession){
+        Profession prof = getProfessionByName(profession);
+        if(prof == null)
+            return new ArrayList<Doctor>();
+        long id = prof.id;
+
         Session session = openSession();
         Query query = session.createQuery("select p from Doctor p WHERE p.profession = " + id + " ORDER BY p.name");
         List<Doctor> doctors = null;
@@ -148,6 +167,25 @@ public class BD {
         return patients;
     }
 
+    public static List<Patient> getPatientsByDisease(String diseaseName){
+        Disease disease = getDiseaseByName(diseaseName);
+        if(disease == null)
+            return new ArrayList<Patient>();
+        long id = disease.id;
+
+        Session session = openSession();
+        Query query = session.createQuery("select p from Patient p WHERE p.disease = " + id + " ORDER BY p.name");
+        List<Patient> patients = null;
+        try{
+            patients = (List<Patient>) query.getResultList();
+        }catch(Exception ex){
+
+        }
+        session.getTransaction().commit();
+        session.close();
+        return patients;
+    }
+
     public static Patient getPatientById(long id){
         Session session = openSession();
         Criteria criteria = session.createCriteria(Patient.class)
@@ -173,6 +211,15 @@ public class BD {
         Query query = session.createQuery("update Patient set doctor = :newD where doctor = :oldD");
         query.setParameter("oldD", oldD);
         query.setParameter("newD", newD);
+        int result = query.executeUpdate();
+        session.getTransaction().commit();
+        session.close();
+    }
+    public static void updatePatient(Patient patient, String name){
+        Session session = openSession();
+        Query query = session.createQuery("update Patient set name = :name where id = :id");
+        query.setParameter("id", patient.id);
+        query.setParameter("name", name);
         int result = query.executeUpdate();
         session.getTransaction().commit();
         session.close();

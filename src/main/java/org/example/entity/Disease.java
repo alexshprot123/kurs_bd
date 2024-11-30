@@ -2,6 +2,8 @@ package org.example.entity;
 
 
 
+import jakarta.validation.constraints.NotBlank;
+
 import javax.persistence.*;
 
 @Entity
